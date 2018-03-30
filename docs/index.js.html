@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: index.js | Rest List</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+        
+            <link type="text/css" rel="stylesheet" href="style/documentation.css">
+        
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 119px; height: 46px">
+        
+            <a href="https://github.com/aluzed/express-mongoose-rest-list" rel="noopener noreferrer" target="_blank">
+                <img src="https://raw.githubusercontent.com/aluzed/express-mongoose-rest-list/dev/logo/logo.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Rest List</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-how_to_use.html">how_to_use</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="how_to_use_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-RestList.html">RestList</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:RestList_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-RestList.html#~__cfg">__cfg</a></li><li><a href="module-RestList.html#~_defaultOptionsValues">_defaultOptionsValues</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="module-RestList.html#~configure">configure</a></li><li><a href="module-RestList.html#~restList">restList</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module RestList
+ * 
+ * @description Mongoose Express Rest API List
+ * 
+ * @author Alexandre Penombre &lt;aluzed_AT_gmail.com>
+ * @copyright 2018
+ * @license MIT
+ */
+const _ = require('lodash');
+
+/** 
+ * @enum
+ */
+let __cfg = {
+  /** 
+   * @type {Number} 0|1 By default 1
+   */
+  warning: 1,
+  /** 
+   * @type {String} By default 'searchable' 
+   */
+  methodName: 'searchable'
+};
+
+/**
+ * @description List of available options for a route
+ * @enum
+ */
+const _defaultOptionsValues = {
+  /**
+   * @type {Number} Display n items per page, By default 10
+   */
+  defaultLimit        : 10,
+  /** 
+   * @type {Object} Default mongoose conditions 
+   */
+  searchParams        : {},
+  /** 
+   * @type {Object} Default fields to get 
+   */
+  defaultFields       : {},
+  /** 
+   * @type {Object} Mongoose options { order... } 
+   */
+  defaultQueryOptions : {}
+};
+
+/**
+ * Set a new GET route in router object
+ * - constraint : router must be set
+ * - constraint : model must be set
+ * - constraint : routePath must be set
+ * 
+ * @function restList
+ * 
+ * @param {Router} router Express Router object
+ * @param {Object} model Mongoose model
+ * @param {String} routePath Route path
+ * @param {Array} Middlewares Array of middlewares
+ * @param {Object} options Query options 
+ * 
+ * @example restList(router, Items, '/list_items')
+ * 
+ * @tutorial how_to_use
+ */
+function RestApiList(router, model, routePath, middlewares, options) {
+  if(!router || !model || !routePath) {
+    throw new Error('Error, missing parameter');
+  }
+  
+  // Set default values to prevent errors
+  options = _.extend({}, _defaultOptionsValues, options);
+  middlewares = middlewares || [];
+
+  if(__cfg.warning === 1 &amp;&amp; typeof model[__cfg.methodName] !== "function") 
+    console.log('RestApiList : Warning searchable is not defined for model ' + model.modelName);
+
+  // Format path to prevent errors
+  if(!routePath.match(/^\//))
+    routePath = '/' + routePath;
+
+  // Route callback
+  const callback = (req, res) => {
+    // By default we sort by _id because this field always exists
+    const sort = !!req.query.sort ? req.query.sort : "_id";
+    const sortDirection = !!req.query.direction ? req.query.direction : "DESC";
+
+    // Object we gonna use to query our database
+    let searchObject = {};
+
+    // Adding optional conditions
+    let defaultConditions = _.cloneDeep(options.searchParams);
+    let filter = req.query.filter || "";
+
+    //=================================================
+    // Filter our content
+    // If there is a filter apply it with each searchable fields in our model
+    if(!!filter) {
+      // Merge filter with searchable
+      let searchable = (typeof model.searchable === "function") ? model[__cfg.methodName]() : [];
+  
+      searchable.map(field => {
+        if(!searchObject.$or) {
+          searchObject.$or = [];
+        }
+  
+        searchObject.$or.push(
+          _.extend({}, defaultConditions, { [field]: new RegExp(filter) })
+        );
+      })
+    }
+    // If there is no filter, get default conditions
+    else {
+      searchObject = defaultConditions;
+    }
+
+    // Set the page items limit
+    let limit = parseInt(req.query.limit, 10) || options.defaultLimit;
+
+    // Offset with asked page
+    let offset = req.query.page > 1 ? 
+      (parseInt(req.query.page, 10) - 1) * limit : 0;
+
+    // Apply our sorting
+    let queryOptions = _.extend({}, options.defaultQueryOptions, {
+      order: [{
+        field: sort,
+        direction: sortDirection
+      }]
+    });
+
+    model
+      .find(searchObject, options.defaultFields, queryOptions)
+      .then(results => {
+        let totalResults = results.length;
+        let totalPages = 1;
+        let newResults = results;
+
+        // Let's calculate our page limit
+        if(limit > 0) {
+          totalPages = Math.floor(totalResults / limit);
+
+          if(totalResults % limit > 0) 
+            totalPages += 1;
+
+          newResults = results.splice(offset, limit);
+        }
+
+        // Return our page results
+        return res.json({
+          results: newResults,
+          currentPage: parseInt(req.query.page, 10) || 1,
+          limit,
+          totalPages,
+          totalResults
+        });
+
+      })
+      .catch(err => reject(err));
+  }
+
+  // Merge all parameters to apply it to router.get
+  let args = _.union([routePath], middlewares, [callback]);
+
+  return router.get.apply(router, args);
+}
+
+/**
+ * @description Configure RestList
+ * 
+ * @function configure
+ * @param {Object} params 
+ * 
+ * @example 
+ * restList.configure({
+ *    warning: 0,
+ *    methodName: 'displayFields'
+ * })
+ */
+RestApiList.configure = params => { __cfg = params; }
+
+module.exports = RestApiList;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://raw.githubusercontent.com/aluzed/express-mongoose-rest-list/dev/logo/logo.png" style="width: 119px; height: 46px">
+    <div class="footer-text">Express Mongoose Rest List - Copyright &copy; 2018</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
