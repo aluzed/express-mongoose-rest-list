@@ -1,6 +1,9 @@
 footer {
   background: #0d1027 !important;
-  height: 65px !important;
+}
+
+footer .logo {
+  display: none;
 }
 
 .title .link {
