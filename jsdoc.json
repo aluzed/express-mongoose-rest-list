@@ -1,0 +1,24 @@
+{
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "recurseDepth": 10,
+  "source": {
+    "includePattern": ".js$",
+    "excludePattern": "node_modules"
+  },
+  "sourceType": "module",
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": [
+      "jsdoc",
+      "closure"
+    ]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "systemName": "Express-Mongoose-Rest-List",
+    "theme": "readable"
+  }
+}

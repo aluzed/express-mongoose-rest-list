@@ -1,0 +1,23 @@
+[
+  {
+    "label": "item 1",
+    "description": "description item 1, lorem ipsum",
+    "ref": "item_1_ref",
+    "enabled": true,
+    "ean13": "123456789012"
+  },
+  {
+    "label": "item 2",
+    "description": "description item 2, dolor sit",
+    "ref": "item_1_ref",
+    "enabled": true,
+    "ean13": "123456789013"
+  },
+  {
+    "label": "item 3",
+    "description": "description item 3, lorem admet",
+    "ref": "item_3_ref",
+    "enabled": false,
+    "ean13": "123456789014"
+  }
+]
