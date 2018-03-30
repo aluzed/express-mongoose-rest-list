@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/_mocha ./tests/restlist.spec.js --exit",
-    "doc": "rm -rf ./docs && jsdoc -u ./tutorials -R ./documentation.md -c ./jsdoc.json -d docs .",
+    "doc": "rm -rf ./docs && jsdoc -u ./tutorials -R ./documentation/documentation.md -c ./jsdoc.json -d docs .",
     "doc-server": "http-server ./docs"
   },
   "repository": {

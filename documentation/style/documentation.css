@@ -1,5 +1,9 @@
-.source {
-  background: #F2F2F2 !important;
+footer {
+  background: #0d1027 !important;
+}
+
+.lnb {
+  background-color: #F2F2F2 !important;
 }
 
 .params, .props {

@@ -26,7 +26,7 @@
     "default": {
       "staticFiles": {
         "include": [
-          "static_doc/"
+          "documentation/"
         ]
       }
     },
