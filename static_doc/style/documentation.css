@@ -1,0 +1,26 @@
+.source {
+  background: #F2F2F2 !important;
+}
+
+.params, .props {
+  width: 100%;
+}
+
+.params tr:hover, .props tr:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.params .name, .props .name {
+  background: rgba(80, 80, 80, 0.1);
+  width: 20%;
+}
+
+.params .name, .props .type {
+  background: rgba(255, 255, 255, 0.6);
+  width: 20%;
+}
+
+.params .description, .props .description {
+  background: rgba(80, 80, 80, 0.1);
+  width: 50%;
+}

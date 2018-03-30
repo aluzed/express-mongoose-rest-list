@@ -4,4 +4,4 @@ Generate a route for Express.js that create a REST API list from a mongoose mode
 
 ## How To Use
 
-Please read the documentation : 
+{@tutorial how_to_use}

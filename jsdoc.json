@@ -15,10 +15,30 @@
       "closure"
     ]
   },
+  "opts": {
+    "template": "node_modules/tui-jsdoc-template"
+  },
+  "how_to_use": {
+    "title": "How to use"
+  },
   "templates": {
-    "cleverLinks": false,
-    "monospaceLinks": false,
-    "systemName": "Express-Mongoose-Rest-List",
-    "theme": "readable"
+    "name": "Rest List",
+    "default": {
+      "staticFiles": {
+        "include": [
+          "static_doc/"
+        ]
+      }
+    },
+    "css": [
+      "style/documentation.css"
+    ],
+    "logo": {
+      "url": "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+      "width": "150px",
+      "height": "13px",
+      "link": "https://github.com/aluzed/express-mongoose-rest-list"
+    },
+    "footerText": "Copyright 2018"
   }
 }

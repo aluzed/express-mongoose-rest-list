@@ -1,5 +1,5 @@
 /**
- * @module MongooseRestList
+ * @module RestList
  * 
  * @description Mongoose Express Rest API List
  * 
@@ -10,28 +10,39 @@
 const _ = require('lodash');
 
 /** 
- * @description customizable values
- * 
- * @param {Number} warning 0|1 By default 1 
- * @param {String} methodName By default 'searchable' 
+ * @enum
  */
 let __cfg = {
+  /** 
+   * @type {Number} 0|1 By default 1
+   */
   warning: 1,
+  /** 
+   * @type {String} By default 'searchable' 
+   */
   methodName: 'searchable'
 };
 
 /**
- * @description options
- * 
- * - defaultLimit : 10 
- * - searchParams : {} 
- * - defaultFields : {} 
- * - defaultQueryOptions : {} 
+ * @description List of available options for a route
+ * @enum
  */
 const _defaultOptionsValues = {
+  /**
+   * @type {Number} Display n items per page, By default 10
+   */
   defaultLimit        : 10,
+  /** 
+   * @type {Object} Default mongoose conditions 
+   */
   searchParams        : {},
+  /** 
+   * @type {Object} Default fields to get 
+   */
   defaultFields       : {},
+  /** 
+   * @type {Object} Mongoose options { order... } 
+   */
   defaultQueryOptions : {}
 };
 
@@ -49,29 +60,9 @@ const _defaultOptionsValues = {
  * @param {Array} Middlewares Array of middlewares
  * @param {Object} options Query options 
  * 
- * @example 
+ * @example restList(router, Items, '/list_items')
  * 
- * ...
- * cosnt router = express.Router();
- * 
- * const Items = mongoose.model('Items');
- * 
- * restList(router, Items, '/list_items', 
- * [
- *    // Session middleware
- *    (req, res, next) => {
- *      if(!req.user)
- *        return res.status(403).send('Forbidden');
- * 
- *      return next();
- *    }
- * ], 
- * {
- *    defaultLimit: 5, // 5 items per page
- *    searchParams: { enabled: true }, // get only enabled items
- *    defaultFields: { label: 1, created: 1 }, // fields
- *    defaultQueryOptions: { skip: 3 } // <- Not recommended
- * })
+ * @tutorial how_to_use
  */
 function RestApiList(router, model, routePath, middlewares, options) {
   if(!router || !model || !routePath) {
@@ -175,6 +166,18 @@ function RestApiList(router, model, routePath, middlewares, options) {
   return router.get.apply(router, args);
 }
 
+/**
+ * @description Configure RestList
+ * 
+ * @function configure
+ * @param {Object} params 
+ * 
+ * @example 
+ * restList.configure({
+ *    warning: 0,
+ *    methodName: 'displayFields'
+ * })
+ */
 RestApiList.configure = params => { __cfg = params; }
 
 module.exports = RestApiList;
