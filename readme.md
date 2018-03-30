@@ -1,4 +1,4 @@
-[logo](https://raw.githubusercontent.com/aluzed/express-mongoose-rest-list/dev/logo/logo.png)
+![logo](https://raw.githubusercontent.com/aluzed/express-mongoose-rest-list/dev/logo/logo.png)
 
 ## Express Mongoose Rest List
 
