@@ -1,5 +1,10 @@
 footer {
   background: #0d1027 !important;
+  height: 65px !important;
+}
+
+.title .link {
+  color: #333 !important;
 }
 
 .lnb {

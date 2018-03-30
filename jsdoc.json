@@ -34,9 +34,9 @@
       "style/documentation.css"
     ],
     "logo": {
-      "url": "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
-      "width": "150px",
-      "height": "13px",
+      "url": "https://raw.githubusercontent.com/aluzed/express-mongoose-rest-list/dev/logo/logo.png",
+      "width": "119px",
+      "height": "46px",
       "link": "https://github.com/aluzed/express-mongoose-rest-list"
     },
     "footerText": "Copyright 2018"
