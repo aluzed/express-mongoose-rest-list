@@ -1,6 +1,6 @@
 {
   "name": "express-mongoose-rest-list",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Create an Express route in order to generate a list from a model",
   "main": "index.js",
   "scripts": {

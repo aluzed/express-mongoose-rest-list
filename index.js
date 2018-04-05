@@ -1,24 +1,24 @@
 /**
  * @module RestList
- * 
+ *
  * @description Mongoose Express Rest API List
- * 
+ *
  * @author Alexandre Penombre <aluzed_AT_gmail.com>
  * @copyright 2018
  * @license MIT
  */
 const _ = require('lodash');
 
-/** 
+/**
  * @enum
  */
 let __cfg = {
-  /** 
+  /**
    * @type {Number} 0|1 By default 1
    */
   warning: 1,
-  /** 
-   * @type {String} By default 'searchable' 
+  /**
+   * @type {String} By default 'searchable'
    */
   methodName: 'searchable'
 };
@@ -32,16 +32,16 @@ const _defaultOptionsValues = {
    * @type {Number} Display n items per page, By default 10
    */
   defaultLimit        : 10,
-  /** 
-   * @type {Object} Default mongoose conditions 
+  /**
+   * @type {Object} Default mongoose conditions
    */
   searchParams        : {},
-  /** 
-   * @type {Object} Default fields to get 
+  /**
+   * @type {Object} Default fields to get
    */
   defaultFields       : {},
-  /** 
-   * @type {Object} Mongoose options { order... } 
+  /**
+   * @type {Object} Mongoose options { order... }
    */
   defaultQueryOptions : {}
 };
@@ -51,29 +51,29 @@ const _defaultOptionsValues = {
  * - constraint : router must be set
  * - constraint : model must be set
  * - constraint : routePath must be set
- * 
+ *
  * @function restList
- * 
+ *
  * @param {Router} router Express Router object
  * @param {Object} model Mongoose model
  * @param {String} routePath Route path
  * @param {Array} Middlewares Array of middlewares
- * @param {Object} options Query options 
- * 
+ * @param {Object} options Query options
+ *
  * @example restList(router, Items, '/list_items')
- * 
+ *
  * @tutorial how_to_use
  */
 function RestApiList(router, model, routePath, middlewares, options) {
   if(!router || !model || !routePath) {
     throw new Error('Error, missing parameter');
   }
-  
+
   // Set default values to prevent errors
   options = _.extend({}, _defaultOptionsValues, options);
   middlewares = middlewares || [];
 
-  if(__cfg.warning === 1 && typeof model[__cfg.methodName] !== "function") 
+  if(__cfg.warning === 1 && typeof model[__cfg.methodName] !== "function")
     console.log('RestApiList : Warning searchable is not defined for model ' + model.modelName);
 
   // Format path to prevent errors
@@ -99,12 +99,12 @@ function RestApiList(router, model, routePath, middlewares, options) {
     if(!!filter) {
       // Merge filter with searchable
       let searchable = (typeof model.searchable === "function") ? model[__cfg.methodName]() : [];
-  
+
       searchable.map(field => {
         if(!searchObject.$or) {
           searchObject.$or = [];
         }
-  
+
         searchObject.$or.push(
           _.extend({}, defaultConditions, { [field]: new RegExp(filter) })
         );
@@ -119,7 +119,7 @@ function RestApiList(router, model, routePath, middlewares, options) {
     let limit = parseInt(req.query.limit, 10) || options.defaultLimit;
 
     // Offset with asked page
-    let offset = req.query.page > 1 ? 
+    let offset = req.query.page > 1 ?
       (parseInt(req.query.page, 10) - 1) * limit : 0;
 
     // Apply our sorting
@@ -141,7 +141,7 @@ function RestApiList(router, model, routePath, middlewares, options) {
         if(limit > 0) {
           totalPages = Math.floor(totalResults / limit);
 
-          if(totalResults % limit > 0) 
+          if(totalResults % limit > 0)
             totalPages += 1;
 
           newResults = results.splice(offset, limit);
@@ -157,7 +157,10 @@ function RestApiList(router, model, routePath, middlewares, options) {
         });
 
       })
-      .catch(err => reject(err));
+      .catch(err => {
+        console.trace(err);
+        res.status(500).send(err.message);
+      });
   }
 
   // Merge all parameters to apply it to router.get
@@ -168,11 +171,11 @@ function RestApiList(router, model, routePath, middlewares, options) {
 
 /**
  * @description Configure RestList
- * 
+ *
  * @function configure
- * @param {Object} params 
- * 
- * @example 
+ * @param {Object} params
+ *
+ * @example
  * restList.configure({
  *    warning: 0,
  *    methodName: 'displayFields'
